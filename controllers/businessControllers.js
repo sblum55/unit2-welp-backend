@@ -56,22 +56,27 @@ businessControllers.createBusiness = async (req, res) => {
     try {
         const user = await models.user.findOne({
             where: {
-                userId: req.headers.authorization
+                id: req.body.userId
             }
         })
+        console.log(user)
 
         const business = await models.business.create({
             name: req.body.name,
             address: req.body.address,
             description: req.body.description,
+            image: req.body.image,
             type: req.body.type
         })
+
+        console.log(business)
 
         const savedBusiness = await user.addBusiness(business)
 
         res.json({ message: 'Business created', business })
 
     } catch (error) {
+        console.log(error)
         res.status(400)
         res.json({error})
     }
