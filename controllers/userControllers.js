@@ -38,6 +38,21 @@ userControllers.userLogin = async (req, res) => {
     }
 }
 
+userControllers.findUser = async (req, res) => {
+    try {
+        const user = await models.user.findOne({
+            where: {
+                id: req.body.userId
+            }
+        })
+        console.log({user});
+        res.json({user})
+    } catch (error) {
+        res.status(400)
+        res.json({error: error.message})
+    }
+}
+
 userControllers.createReview = async (req, res) => {
     try{
         const user = await models.user.findOne ({
@@ -52,13 +67,15 @@ userControllers.createReview = async (req, res) => {
             }
         })
 
-        const addReview = await models.review.create ({
+        const review = await models.review.create ({
             headline: req.body.headline,
             content: req.body.content,
-            rating: req.body,rating,
+            rating: req.body.rating,
         })
 
-        res.json({user, business, addReview})
+        await user.addReview(review)
+        await business.addReview(review)
+        res.json({user, business, review})
 
     }catch (error) {
         console.log(error);

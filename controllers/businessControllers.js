@@ -38,8 +38,13 @@ businessControllers.getReviews = async (req, res) => {
     try {
         const business = await models.business.findOne({
             where: {
-                name: req.body.name
-                // id: req.body.businessId
+                id: req.body.businessId
+            }
+        })
+
+        const user = await models.user.findOne({
+            where: {
+                id: req.body.userId
             }
         })
 
@@ -49,7 +54,7 @@ businessControllers.getReviews = async (req, res) => {
 
     } catch (error) {
         res.status(400)
-        res.json({error})
+        res.json({error, error: message})
     }
 }
 
