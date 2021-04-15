@@ -6,10 +6,11 @@ businessControllers.getOneBusiness = async (req, res) => {
     try {
         const business = await models.business.findOne({
             where: {
-                name: req.body.name
-                // id: req.body.businessId
+                id: req.body.businessId
             }
         })
+
+        // might need to code user check for owner status
 
         res.send(business)
         console.log(business)
