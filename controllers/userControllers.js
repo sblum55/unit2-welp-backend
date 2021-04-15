@@ -20,19 +20,19 @@ userControllers.createUser = async (req, res) => {
 
 userControllers.userLogin = async (req, res) => {
     try{
-        const user = await models.user.findOne ({
+        const user = await models.user.findOne({
             where: {
                 email: req.body.email,
                 password: req.body.password
             }
         })
-        if (user.password === req.body.password){
-            res.json({message: 'login successful', ussr:user})
-        }else {
+        if (user.password === req.body.password) {
+            res.json({message: 'login successful', user: user})
+        } else {
             res.status(400)
             res.json({error: 'login failed'})
         }
-    }catch (error) {
+    } catch (error) {
         res.status(400)
         res.json({error: 'login failed'})
     }
