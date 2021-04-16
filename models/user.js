@@ -2,6 +2,9 @@
 const {
   Model
 } = require('sequelize');
+
+const bcrypt = require('bcrypt')
+
 module.exports = (sequelize, DataTypes) => {
   class user extends Model {
     /**
@@ -14,6 +17,10 @@ module.exports = (sequelize, DataTypes) => {
       models.user.hasMany(models.business)
       models.user.hasMany(models.review)
     }
+    checkPassword(plainPassword) {
+      return bcrypt.compareSync(plainPassword, this.password)
+    }
+
   };
   user.init({
     name: DataTypes.STRING,
@@ -22,6 +29,11 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'user',
+  });
+  user.addHook('beforeCreate', (user, options) => {
+    const hashedPassword = bcrypt.hashSync(user.password, 10)
+    user.password = hashedPassword
+
   });
   return user;
 };

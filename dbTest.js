@@ -1,5 +1,20 @@
 const models = require('./models')
 
+/* const testUser = async () => {
+    const user1 = await models.user.create({
+        name: 'Test Hash',
+        email: 'testhash@test.com',
+        password: '1234'
+    })
+
+    console.log(user1)
+}
+
+testUser() */
+
+
+
+
 /* const createUsers = async () => {
     const user1 = await models.user.create({
         name: 'Test1',
