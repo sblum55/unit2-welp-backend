@@ -1,4 +1,5 @@
 const models = require('../models')
+const jwt = require('jsonwebtoken')
 
 const businessControllers = {}
 
@@ -42,27 +43,23 @@ businessControllers.getReviews = async (req, res) => {
             }
         })
 
-        const user = await models.user.findOne({
-            where: {
-                id: req.body.userId
-            }
-        })
-
         const allReviews = await business.getReviews()
         res.send(allReviews)
         console.log(allReviews)
 
     } catch (error) {
-        res.status(400)
-        res.json({error, error: message})
+        res.status(404)
+        res.json({error})
     }
 }
 
 businessControllers.createBusiness = async (req, res) => {
     try {
+        const decryptedId = jwt.verify(req.body.userId, process.env.JWT_SECRET)
+
         const user = await models.user.findOne({
             where: {
-                id: req.body.userId
+                id: decryptedId.userId
             }
         })
         console.log(user)

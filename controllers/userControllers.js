@@ -1,16 +1,22 @@
 const models = require('../models')
+const jwt = require('jsonwebtoken')
+const bcrypt = require('bcrypt')
 
 const userControllers = {}
 
 userControllers.createUser = async (req, res) => {
     try {
+
         const user = await models.user.create({
             name: req.body.name,
             email: req.body.email,
             password: req.body.password
 
         })
-        res.json({message: 'Account added successfully', user})
+
+        const encryptedId = jwt.sign( { userId: user.id }, process.env.JWT_SECRET)
+
+        res.json({message: 'Account added successfully', userId: encryptedId, user})
     }catch (error) {
         console.log(error);
         res.status(400)
@@ -22,17 +28,20 @@ userControllers.userLogin = async (req, res) => {
     try{
         const user = await models.user.findOne({
             where: {
-                email: req.body.email,
-                password: req.body.password
+                email: req.body.email
             }
         })
-        if (user.password === req.body.password) {
-            res.json({message: 'login successful', user: user})
+
+        const encryptedId = jwt.sign( { userId: user.id }, process.env.JWT_SECRET)
+
+        if ( user.checkPassword(req.body.password) ) {
+            res.json({message: 'login successful', user: user, userId: encryptedId })
         } else {
             res.status(400)
             res.json({error: 'login failed'})
         }
     } catch (error) {
+        console.log(error)
         res.status(400)
         res.json({error: 'login failed'})
     }
@@ -53,11 +62,19 @@ userControllers.findUser = async (req, res) => {
     }
 }
 
+
 userControllers.createReview = async (req, res) => {
     try{
+        console.log(req.params.userId)
+        console.log(typeof req.params.userId)
+
+        const decryptedId = jwt.verify(req.params.userId, process.env.JWT_SECRET)
+        console.log(decryptedId)
+        console.log(typeof decryptedId)
+
         const user = await models.user.findOne ({
             where: {
-                id: req.params.userId
+                id: decryptedId.userId
             }
         })
 
